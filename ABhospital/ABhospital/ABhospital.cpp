@@ -13,6 +13,8 @@ void gestionarMedicos(vector<Medico>& medicos);
 void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Medico>& medicos);
 void generarReportes(vector<Cita>& citas);
 
+
+//Gestion del Hospital
 int main() {
     vector<Paciente> pacientes;
     vector<Medico> medicos;
@@ -48,7 +50,7 @@ int main() {
             cout << "Saliendo del programa.\n";
             break;
         default:
-            cout << "Opción no válida.\n";
+            cout << "Opcion no valida.\n";
         }
     } while (opcion != 0);
 
@@ -56,17 +58,17 @@ int main() {
 }
 
 void menuPrincipal() {
-    cout << "\n=== Menú ===\n";
+    cout << "\n=== Menu ===\n";
     cout << "1. Gestionar Pacientes\n";
     cout << "2. Gestionar Médicos\n";
     cout << "3. Gestionar Citas\n";
     cout << "4. Generar Reportes\n";
     cout << "0. Salir\n";
-    cout << "Ingrese una opción: ";
+    cout << "Ingrese una opcion: ";
 }
 
 void gestionarPacientes(vector<Paciente>& pacientes) {
-    cout << "Gestión de Pacientes\n";
+    cout << "Gestion de Pacientes\n";
     cout << "1. Dar de alta\n";
     cout << "2. Dar de baja\n";
     cout << "3. Registrar historial\n";
@@ -111,11 +113,11 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
 }
 
 void gestionarMedicos(vector<Medico>& medicos) {
-    cout << "Gestión de Médicos\n";
+    cout << "Gestion de Medicos\n";
     cout << "1. Dar de alta\n";
     cout << "2. Dar de baja\n";
     cout << "3. Asignar especialidad\n";
-    cout << "Ingrese una opción: ";
+    cout << "Ingrese una opcion: ";
     int opcion;
     cin >> opcion;
     if (opcion == 1) {
@@ -146,7 +148,7 @@ void gestionarMedicos(vector<Medico>& medicos) {
         }
     }
     else if (opcion == 3) {
-        cout << "Ingrese el ID del médico para asignar nueva especialidad: ";
+        cout << "Ingrese el ID del medico para asignar nueva especialidad: ";
         int id;
         cin >> id;
         for (auto& medico : medicos) {
@@ -165,7 +167,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
     cout << "Gestión de Citas\n";
     cout << "1. Asignar nueva cita\n";
     cout << "2. Cancelar cita\n";
-    cout << "Ingrese una opción: ";
+    cout << "Ingrese una opcion: ";
     int opcion;
     cin >> opcion;
     if (opcion == 1) {
@@ -177,7 +179,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
         cin >> urgencia;
         cout << "ID del Paciente: ";
         cin >> idPaciente;
-        cout << "ID del Médico: ";
+        cout << "ID del Medico: ";
         cin >> idMedico;
 
         Paciente* paciente = nullptr;
@@ -200,11 +202,11 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
             citas.back().asignarCita();
         }
         else {
-            cout << "Datos inválidos de paciente o médico.\n";
+            cout << "Datos invalidos de paciente o medico.\n";
         }
     }
     else if (opcion == 2) {
-        cout << "Ingrese el índice de la cita a cancelar: ";
+        cout << "Ingrese el indice de la cita a cancelar: ";
         int index;
         cin >> index;
         if (index >= 0 && index < citas.size()) {
@@ -212,7 +214,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
             citas.erase(citas.begin() + index);
         }
         else {
-            cout << "Índice inválido.\n";
+            cout << "Indice invalido.\n";
         }
     }
 }
@@ -221,7 +223,7 @@ void generarReportes(vector<Cita>& citas) {
     cout << "Reportes\n";
     cout << "1. Listar pacientes atendidos\n";
     cout << "2. Listar citas pendientes\n";
-    cout << "Ingrese una opción: ";
+    cout << "Ingrese una opcion: ";
     int opcion;
     cin >> opcion;
     if (opcion == 1) {

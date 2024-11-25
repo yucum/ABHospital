@@ -13,6 +13,6 @@ void Reporte::generarListadoPacientesAtendidos(const vector<Cita>& citas) {
 void Reporte::listarCitasPendientes(const vector<Cita>& citas) {
     cout << "Citas pendientes:\n";
     for (const auto& cita : citas) {
-        cout << "- Paciente: " << cita.getPaciente().getNombre() << ", Médico: " << cita.getMedico().getNombre() << "\n";
+        cout << "- Paciente: " << cita.getPaciente().getNombre() << ", Medico: " << cita.getMedico().getNombre() << "\n";
     }
 }

@@ -4,11 +4,11 @@
 Medico::Medico(string nom, int id, string esp, bool disp) : nombre(nom), id(id), especialidad(esp), disponibilidad(disp) {}
 
 void Medico::altaMedico() {
-    cout << "Médico dado de alta con éxito: " << nombre << "\n";
+    cout << "Medico dado de alta con exito: " << nombre << "\n";
 }
 
 void Medico::bajaMedico() {
-    cout << "Médico dado de baja con éxito: " << nombre << "\n";
+    cout << "Medico dado de baja con exito: " << nombre << "\n";
 }
 
 void Medico::asignarEspecialidad(string nuevaEspecialidad) {

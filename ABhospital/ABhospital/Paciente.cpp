@@ -4,11 +4,11 @@
 Paciente::Paciente(string nom, int id, string fecha) : nombre(nom), id(id), fechaIngreso(fecha), historialClinico("") {}
 
 void Paciente::altaPaciente() {
-    cout << "Paciente dado de alta con éxito: " << nombre << "\n";
+    cout << "Paciente dado de alta con exito: " << nombre << "\n";
 }
 
 void Paciente::bajaPaciente() {
-    cout << "Paciente dado de baja con éxito: " << nombre << "\n";
+    cout << "Paciente dado de baja con exito: " << nombre << "\n";
 }
 
 void Paciente::modificarDatos() {
@@ -20,8 +20,8 @@ void Paciente::buscarPaciente() const {
 }
 
 void Paciente::registrarHistorial() {
-    cout << "Registrando historial clínico para el paciente " << nombre << "\n";
-    historialClinico = "Historial registrado para demostración.";
+    cout << "Registrando historial clinico para el paciente " << nombre << "\n";
+    historialClinico = "Historial registrado para demostracion.";
 }
 
 string Paciente::getNombre() const {
