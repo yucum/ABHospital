@@ -3,7 +3,7 @@
 #
 
 # Agregue un origen al ejecutable de este proyecto.
-add_executable (ABhospital "ABhospital.cpp" "ABhospital.h")
+add_executable (ABhospital "ABhospital.cpp" "ABhospital.h" "Paciente.h" "Paciente.cpp" "Medico.h" "Medico.cpp" "Cita.h" "Cita.cpp" "Reporte.h" "Reporte.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ABhospital PROPERTY CXX_STANDARD 20)
