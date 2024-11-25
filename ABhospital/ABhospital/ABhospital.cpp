@@ -60,7 +60,7 @@ int main() {
 void menuPrincipal() {
     cout << "\n=== Menu ===\n";
     cout << "1. Gestionar Pacientes\n";
-    cout << "2. Gestionar Médicos\n";
+    cout << "2. Gestionar Medicos\n";
     cout << "3. Gestionar Citas\n";
     cout << "4. Generar Reportes\n";
     cout << "0. Salir\n";
