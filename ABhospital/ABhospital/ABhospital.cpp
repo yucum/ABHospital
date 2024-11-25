@@ -20,7 +20,7 @@ int main() {
     vector<Medico> medicos;
     vector<Cita> citas;
 
-    pacientes.push_back(Paciente("Monolito Calvito", 172, "23/11/2024"));
+    pacientes.push_back(Paciente("Manolito Calvito", 172, "23/11/2024"));
     pacientes.push_back(Paciente("Ivan Butanero", 203, "15/11/2024"));
 
     medicos.push_back(Medico("Daniel Ferre", 431, "Cardiología", true));
@@ -72,7 +72,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
     cout << "1. Dar de alta\n";
     cout << "2. Dar de baja\n";
     cout << "3. Registrar historial\n";
-    cout << "Ingrese una opción: ";
+    cout << "Ingrese una opcion: ";
     int opcion;
     cin >> opcion;
     if (opcion == 1) {
