@@ -18,11 +18,11 @@ int main() {
     vector<Medico> medicos;
     vector<Cita> citas;
 
-    pacientes.push_back(Paciente("Juan Pérez", 101, "23/11/2024"));
-    pacientes.push_back(Paciente("María López", 102, "15/11/2024"));
+    pacientes.push_back(Paciente("Monolito Calvito", 172, "23/11/2024"));
+    pacientes.push_back(Paciente("Ivan Butanero", 203, "15/11/2024"));
 
-    medicos.push_back(Medico("Carlos Gómez", 201, "Cardiología", true));
-    medicos.push_back(Medico("Ana Ruiz", 202, "Pediatría", false));
+    medicos.push_back(Medico("Daniel Ferre", 431, "Cardiología", true));
+    medicos.push_back(Medico("Yucum Bala", 622, "Pediatría", false));
 
     citas.push_back(Cita("25/11/2024", "Alta", pacientes[0], medicos[0]));
     citas.push_back(Cita("28/11/2024", "Media", pacientes[1], medicos[1]));
@@ -56,7 +56,7 @@ int main() {
 }
 
 void menuPrincipal() {
-    cout << "\nMenú Principal\n";
+    cout << "\n=== Menú ===\n";
     cout << "1. Gestionar Pacientes\n";
     cout << "2. Gestionar Médicos\n";
     cout << "3. Gestionar Citas\n";
