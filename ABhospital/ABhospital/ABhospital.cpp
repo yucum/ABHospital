@@ -16,11 +16,12 @@ void generarReportes(vector<Cita>& citas);
 
 //Gestion del Hospital
 int main() {
+
     vector<Paciente> pacientes;
     vector<Medico> medicos;
     vector<Cita> citas;
 
-    pacientes.push_back(Paciente("Manolito Calvito", 172, "23/11/2024"));
+    pacientes.push_back(Paciente("Manolito Churrero", 172, "23/11/2024"));
     pacientes.push_back(Paciente("Ivan Butanero", 203, "15/11/2024"));
 
     medicos.push_back(Medico("Daniel Ferre", 431, "Cardiología", true));
@@ -75,6 +76,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
     cout << "Ingrese una opcion: ";
     int opcion;
     cin >> opcion;
+
     if (opcion == 1) {
         string nombre, fecha;
         int id;
@@ -135,6 +137,7 @@ void gestionarMedicos(vector<Medico>& medicos) {
         medicos.push_back(Medico(nombre, id, especialidad, disponibilidad));
         medicos.back().altaMedico();
     }
+
     else if (opcion == 2) {
         cout << "Ingrese el ID del médico a dar de baja: ";
         int id;
@@ -147,6 +150,7 @@ void gestionarMedicos(vector<Medico>& medicos) {
             }
         }
     }
+
     else if (opcion == 3) {
         cout << "Ingrese el ID del medico para asignar nueva especialidad: ";
         int id;
@@ -164,7 +168,7 @@ void gestionarMedicos(vector<Medico>& medicos) {
 }
 
 void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Medico>& medicos) {
-    cout << "Gestión de Citas\n";
+    cout << "Gestion de Citas\n";
     cout << "1. Asignar nueva cita\n";
     cout << "2. Cancelar cita\n";
     cout << "Ingrese una opcion: ";
@@ -183,27 +187,29 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
         cin >> idMedico;
 
         Paciente* paciente = nullptr;
-        Medico* medico = nullptr;
-
         for (auto& p : pacientes) {
             if (p.getId() == idPaciente) {
                 paciente = &p;
                 break;
             }
         }
+        if (!paciente) {
+            cout << "No se ha encontrado un paciente con el ID " << idPaciente << ".\n";
+            return;
+        }
+        Medico* medico = nullptr;
         for (auto& m : medicos) {
             if (m.getId() == idMedico) {
                 medico = &m;
                 break;
             }
         }
-        if (paciente && medico) {
-            citas.push_back(Cita(fecha, urgencia, *paciente, *medico));
-            citas.back().asignarCita();
+        if (!medico) {
+            cout << "No se ha encontrado un medico con el ID " << idMedico << ".\n";
+            return;
         }
-        else {
-            cout << "Datos invalidos de paciente o medico.\n";
-        }
+        citas.push_back(Cita(fecha, urgencia, *paciente, *medico));
+        citas.back().asignarCita();
     }
     else if (opcion == 2) {
         cout << "Ingrese el indice de la cita a cancelar: ";
@@ -226,6 +232,7 @@ void generarReportes(vector<Cita>& citas) {
     cout << "Ingrese una opcion: ";
     int opcion;
     cin >> opcion;
+
     if (opcion == 1) {
         cout << "Ingrese la fecha de inicio (DD/MM/AAAA): ";
         string inicio, fin;
@@ -235,6 +242,7 @@ void generarReportes(vector<Cita>& citas) {
         Reporte reporte(inicio, fin);
         reporte.generarListadoPacientesAtendidos(citas);
     }
+
     else if (opcion == 2) {
         Reporte reporte("", "");
         reporte.listarCitasPendientes(citas);
