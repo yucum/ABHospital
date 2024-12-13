@@ -2,7 +2,6 @@
 #define MEDICO_H
 
 #include <string>
-
 using namespace std;
 
 class Medico {
@@ -13,15 +12,19 @@ private:
     bool disponibilidad;
 
 public:
-    Medico(string nom, int id, string esp, bool disp);
+    // Constructor
+    Medico(string nombre, int id, string especialidad, bool disponibilidad);
 
-    void altaMedico();
-    void bajaMedico();
-    void asignarEspecialidad(string nuevaEspecialidad);
+    // Getters
     string getNombre() const;
     int getId() const;
     string getEspecialidad() const;
-    bool isDisponible() const;
+    bool getDisponibilidad() const;
+
+    void altaMedico() const;
+    void bajaMedico() const;
+    void asignarEspecialidad(string nuevaEspecialidad);
+    void cambiarDisponibilidad(bool nuevaDisponibilidad);
 };
 
 #endif

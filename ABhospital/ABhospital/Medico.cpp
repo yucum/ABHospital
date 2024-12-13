@@ -1,19 +1,10 @@
 #include "Medico.h"
 #include <iostream>
 
-Medico::Medico(string nom, int id, string esp, bool disp) : nombre(nom), id(id), especialidad(esp), disponibilidad(disp) {}
+using namespace std;
 
-void Medico::altaMedico() {
-    cout << "Medico dado de alta con exito: " << nombre << "\n";
-}
-
-void Medico::bajaMedico() {
-    cout << "Medico dado de baja con exito: " << nombre << "\n";
-}
-
-void Medico::asignarEspecialidad(string nuevaEspecialidad) {
-    especialidad = nuevaEspecialidad;
-    cout << "Nueva especialidad asignada: " << especialidad << "\n";
+Medico::Medico(string nombre, int id, string especialidad, bool disponibilidad)
+    : nombre(nombre), id(id), especialidad(especialidad), disponibilidad(disponibilidad) {
 }
 
 string Medico::getNombre() const {
@@ -28,6 +19,25 @@ string Medico::getEspecialidad() const {
     return especialidad;
 }
 
-bool Medico::isDisponible() const {
+bool Medico::getDisponibilidad() const {
     return disponibilidad;
+}
+
+void Medico::altaMedico() const {
+    cout << "Medico " << nombre << " (ID:" << id << ") dado de alta.\n";
+}
+
+void Medico::bajaMedico() const {
+    cout << "Medico " << nombre << " (ID:" << id << ") dado de baja.\n";
+}
+
+void Medico::asignarEspecialidad(string nuevaEspecialidad) {
+    especialidad = nuevaEspecialidad;
+    cout << "Especialidad de " << nombre << " (ID:" << id << ") asignada a: " << especialidad << ".\n";
+}
+
+void Medico::cambiarDisponibilidad(bool nuevaDisponibilidad) {
+    disponibilidad = nuevaDisponibilidad;
+    cout << "Disponibilidad de " << nombre << " (ID:" << id << ") actualizada a: "
+        << (disponibilidad ? "Disponible" : "No disponible") << ".\n";
 }
