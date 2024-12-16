@@ -1,27 +1,13 @@
 #include "Paciente.h"
 #include <iostream>
 
-Paciente::Paciente(string nom, int id, string fecha) : nombre(nom), id(id), fechaIngreso(fecha), historialClinico("") {}
+using namespace std;
 
-void Paciente::altaPaciente() {
-    cout << "Paciente dado de alta con exito: " << nombre << "\n";
-}
+Paciente::Paciente(string nombre, int id, string fechaIngreso)
+    : nombre(nombre), id(id), fechaIngreso(fechaIngreso) {
 
-void Paciente::bajaPaciente() {
-    cout << "Paciente dado de baja con exito: " << nombre << "\n";
-}
-
-void Paciente::modificarDatos() {
-    cout << "Modificando datos del paciente " << nombre << "\n";
-}
-
-void Paciente::buscarPaciente() const {
-    cout << "Buscando paciente: " << nombre << " con ID: " << id << "\n";
-}
-
-void Paciente::registrarHistorial() {
-    cout << "Registrando historial clinico para el paciente " << nombre << "\n";
-    historialClinico = "Historial registrado para demostracion.";
+    historialClinico.push_back("Ingreso inicial: " + fechaIngreso);
+    historialClinico.push_back("Consulta médica: Sin hallazgos actualmente");
 }
 
 string Paciente::getNombre() const {
@@ -36,6 +22,30 @@ string Paciente::getFechaIngreso() const {
     return fechaIngreso;
 }
 
-string Paciente::getHistorialClinico() const {
+vector<string> Paciente::getHistorialClinico() const {
     return historialClinico;
+}
+
+void Paciente::setNombre(string nuevoNombre) {
+    nombre = nuevoNombre;
+}
+
+void Paciente::setId(int nuevoId) {
+    id = nuevoId;
+}
+
+void Paciente::setFechaIngreso(string nuevaFecha) {
+    fechaIngreso = nuevaFecha;
+}
+
+void Paciente::altaPaciente() const {
+    cout << "Paciente " << nombre << " (ID: " << id << ") dado de alta.\n";
+}
+
+void Paciente::bajaPaciente() const {
+    cout << "Paciente " << nombre << " (ID: " << id << ") dado de baja.\n";
+}
+
+void Paciente::registrarHistorial(string entrada) {
+    historialClinico.push_back(entrada);
 }
