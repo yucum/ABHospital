@@ -4,7 +4,7 @@
 Cita::Cita(string fecha, string urg, Paciente pac, Medico med) : fecha(fecha), urgencia(urg), paciente(pac), medico(med) {}
 
 void Cita::asignarCita() {
-    cout << "Cita asignada el " << fecha << " con urgencia " << urgencia << "\n";
+    cout << "Cita asignada e " << fecha << " con urgencia " << urgencia << "\n";
 }
 
 void Cita::cancelarCita() {

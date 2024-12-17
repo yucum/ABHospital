@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
 #include <regex>
+#include <fstream> 
 #include "Paciente.h"
 #include "Medico.h"
 #include "Cita.h"
@@ -14,14 +15,15 @@ void gestionarMedicos(vector<Medico>& medicos);
 void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Medico>& medicos);
 void generarReportes(vector<Cita>& citas);
 bool validarFecha(const string& fecha);
+void guardarDatosCSV(const vector<Paciente>& pacientes, const vector<Medico>& medicos, const vector<Cita>& citas);
 
 int main() {
     vector<Paciente> pacientes;
     vector<Medico> medicos;
     vector<Cita> citas;
 
-    pacientes.push_back(Paciente("Manolito Churrero", 172, "23/11/24"));
-    pacientes.push_back(Paciente("Ivan Butanero", 203, "15/11/24"));
+    pacientes.push_back(Paciente("Manolito Churrero", 172, "23/11/2024"));
+    pacientes.push_back(Paciente("Ivan Butanero", 203, "15/11/2024"));
 
     medicos.push_back(Medico("Daniel Ferre", 431, "Cardiologia", true));
     medicos.push_back(Medico("Yucum Bala", 622, "Pediatria", false));
@@ -55,6 +57,9 @@ int main() {
         }
     } while (opcion != 0);
 
+
+    guardarDatosCSV(pacientes, medicos, citas);
+
     return 0;
 }
 
@@ -75,6 +80,54 @@ bool validarFecha(const string& fecha) {
     }
     cout << "La fecha introducida no es correcta. Debe ser DD/MM/AAAA.\n";
     return false;
+}
+
+void guardarDatosCSV(const vector<Paciente>& pacientes, const vector<Medico>& medicos, const vector<Cita>& citas) {
+
+    ofstream archivoPaciente("paciente_datos.csv"); 
+    if (archivoPaciente.is_open()) {
+        archivoPaciente << "ID,Nombre,Fecha de Ingreso\n";
+        for (const auto& paciente : pacientes) {
+            archivoPaciente << paciente.getId() << ","
+                            << paciente.getNombre() << ","
+                            << paciente.getFechaIngreso() << "\n";
+        }
+        archivoPaciente.close();
+        cout << "Datos de paciente guardados.\n";
+    } else {
+        cout << "No se pudo abrir el archivo de pacientes.\n";
+    }
+
+    ofstream archivoMedico("medico_datos.csv");
+    if (archivoMedico.is_open()) {
+        archivoMedico << "ID,Nombre,Especialidad,Disponibilidad\n";
+        for (const auto& medico : medicos) {
+            archivoMedico << medico.getId() << ","
+                          << medico.getNombre() << ","
+                          << medico.getEspecialidad() << ","
+                          << (medico.getDisponibilidad() ? "Disponible" : "No disponible") << "\n";
+        }
+        archivoMedico.close();
+        cout << "Datos de médico guardados.\n";
+    } else {
+        cout << "No se pudo abrir el archivo de médicos.\n";
+    }
+
+
+    ofstream archivoCita("cita_datos.csv"); 
+    if (archivoCita.is_open()) {
+        archivoCita << "Fecha,Urgencia,Paciente_ID,Medico_ID\n";
+        for (const auto& cita : citas) {
+            archivoCita << cita.getFecha() << ","
+                        << cita.getUrgencia() << ","
+                        << cita.getPaciente().getId() << ","
+                        << cita.getMedico().getId() << "\n";
+        }
+        archivoCita.close();
+        cout << "Datos de citas guardados.\n";
+    } else {
+        cout << "No se pudo abrir el archivo de citas.\n";
+    }
 }
 
 void gestionarPacientes(vector<Paciente>& pacientes) {
@@ -124,7 +177,8 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
         int id;
         cin >> id;
 
-        for(auto& paciente : pacientes) {
+        for (auto& paciente : pacientes) {
+
             if (paciente.getId() == id) {
                 cout << "Modificar:\n1.Nombre\n2.ID\n3.Fecha de ingreso\nIngrese una opcion: ";
                 int subopcion;
@@ -158,7 +212,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
         }
     }
 
-    else if(opcion == 4) {
+    else if (opcion == 4) {
         cout << "Buscar por:\n1.Nombre\n2.ID\n3.Fecha de ingreso\nIngrese una opcion: ";
         int subopcion;
         cin >> subopcion;
@@ -175,7 +229,8 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
             }
         }
 
-        else if(subopcion == 2) {
+        else if (subopcion == 2) {
+
             cout << "Ingrese el ID:";
             int id;
             cin >> id;
@@ -186,7 +241,8 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
                 }
             }
         }
-        else if(subopcion == 3) {
+
+        else if (subopcion == 3) {
             string fecha;
             do {
                 cout << "Ingrese la fecha de ingreso (DD/MM/AA):";
@@ -203,7 +259,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
         }
     }
 
-    else if(opcion == 5) {
+    else if (opcion == 5) {
         cout << "Ingrese el ID del paciente para ver su historial clinico:";
         int id;
         cin >> id;
@@ -343,7 +399,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
 }
 
 void generarReportes(vector<Cita>& citas) {
-    cout <<"Generando reportes de citas\n";
+    cout << "Generando reportes de citas\n";
     for (const auto& cita : citas) {
         cout << "Fecha:" << cita.getFecha()
             << ",Paciente:" << cita.getPaciente().getNombre()
