@@ -3,31 +3,28 @@
 
 #include <string>
 #include <vector>
-using namespace std;
 
 class Paciente {
 private:
-    string nombre;
+    std::string nombre;
     int id;
-    string fechaIngreso;
-    vector<string> historialClinico;
+    std::string fechaIngreso;
+    std::vector<std::string> historial;
 
 public:
+   
+    Paciente(std::string nombre, int id, std::string fechaIngreso);
 
-    Paciente(string nombre, int id, string fechaIngreso);
-
-    string getNombre() const;
+    std::string getNombre() const;
     int getId() const;
-    string getFechaIngreso() const;
-    vector<string> getHistorialClinico() const;
+    std::string getFechaIngreso() const;
+    const std::vector<std::string>& getHistorial() const;
 
-    void setNombre(string nuevoNombre);
-    void setId(int nuevoId);
-    void setFechaIngreso(string nuevaFecha);
+    void setNombre(const std::string& nuevoNombre);
+    void setFechaIngreso(const std::string& nuevaFecha);
 
-    void altaPaciente() const;
-    void bajaPaciente() const;
-    void registrarHistorial(string entrada);
+    void registrarHistorial(const std::string& entrada);
+    void mostrarHistorial() const;
 };
 
 #endif

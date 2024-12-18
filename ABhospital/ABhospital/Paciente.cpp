@@ -1,13 +1,11 @@
 #include "Paciente.h"
 #include <iostream>
-
+#include <vector>
+#include <string>
 using namespace std;
 
 Paciente::Paciente(string nombre, int id, string fechaIngreso)
     : nombre(nombre), id(id), fechaIngreso(fechaIngreso) {
-
-    historialClinico.push_back("Ingreso inicial: " + fechaIngreso);
-    historialClinico.push_back("Consulta médica: Sin hallazgos actualmente");
 }
 
 string Paciente::getNombre() const {
@@ -22,30 +20,30 @@ string Paciente::getFechaIngreso() const {
     return fechaIngreso;
 }
 
-vector<string> Paciente::getHistorialClinico() const {
-    return historialClinico;
+const vector<string>& Paciente::getHistorial() const {
+    return historial;
 }
 
-void Paciente::setNombre(string nuevoNombre) {
+void Paciente::setNombre(const string& nuevoNombre) {
     nombre = nuevoNombre;
 }
 
-void Paciente::setId(int nuevoId) {
-    id = nuevoId;
-}
-
-void Paciente::setFechaIngreso(string nuevaFecha) {
+void Paciente::setFechaIngreso(const string& nuevaFecha) {
     fechaIngreso = nuevaFecha;
 }
 
-void Paciente::altaPaciente() const {
-    cout << "Paciente " << nombre << " (ID: " << id << ") dado de alta.\n";
+void Paciente::registrarHistorial(const string& entrada) {
+    historial.push_back(entrada);
 }
 
-void Paciente::bajaPaciente() const {
-    cout << "Paciente " << nombre << " (ID: " << id << ") dado de baja.\n";
-}
-
-void Paciente::registrarHistorial(string entrada) {
-    historialClinico.push_back(entrada);
+void Paciente::mostrarHistorial() const {
+    if (historial.empty()) {
+        cout << "El paciente no tiene historial clínico registrado.\n";
+    }
+    else {
+        cout << "Historial clínico de " << nombre << ":\n";
+        for (const auto& entrada : historial) {
+            cout << "- " << entrada << "\n";
+        }
+    }
 }
