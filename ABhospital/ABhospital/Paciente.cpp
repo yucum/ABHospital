@@ -1,8 +1,5 @@
 #include "Paciente.h"
 #include <iostream>
-#include <vector>
-#include <string>
-using namespace std;
 
 Paciente::Paciente(string nombre, int id, string fechaIngreso)
     : nombre(nombre), id(id), fechaIngreso(fechaIngreso) {

@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <locale>
 #include <vector>
 #include <regex>
 #include <fstream>
@@ -13,13 +14,21 @@ void menuPrincipal();
 void gestionarPacientes(vector<Paciente>& pacientes);
 void gestionarMedicos(vector<Medico>& medicos);
 void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Medico>& medicos);
-void generarReportes(vector<Cita>& citas);
+void gestionarReportes(const vector<Cita>& citas, const vector<Paciente>& pacientes);
 bool validarFecha(const string& fecha);
 void guardarDatosCSV(const vector<Paciente>& pacientes, const vector<Medico>& medicos, const vector<Cita>& citas);
 void mostrarTodosPacientes(const vector<Paciente>& pacientes);
 void mostrarTodosMedicos(const vector<Medico>& medicos);
 
+
+
 int main() {
+    //UTF-8
+    locale::global(locale(""));
+    wcin.imbue(locale());
+    wcout.imbue(std::locale());
+    ios::sync_with_stdio(false);
+
     vector<Paciente> pacientes;
     vector<Medico> medicos;
     vector<Cita> citas;
@@ -52,7 +61,7 @@ int main() {
             gestionarCitas(citas, pacientes, medicos);
             break;
         case 4:
-            generarReportes(citas);
+            gestionarReportes(citas, pacientes);
             break;
         case 0:
             cout << "Saliendo del programa.\n";
@@ -72,7 +81,7 @@ void menuPrincipal() {
     cout << "1. Gestionar Pacientes\n";
     cout << "2. Gestionar Médicos\n";
     cout << "3. Gestionar Citas\n";
-    cout << "4. Generar Reportes\n";
+    cout << "4. Gestionar Reportes\n";
     cout << "0. Salir\n";
     cout << "Ingrese una opción: ";
 }
@@ -142,6 +151,50 @@ void guardarDatosCSV(const vector<Paciente>& pacientes, const vector<Medico>& me
     else {
         cout << "No se pudo abrir el archivo de citas.\n";
     }
+
+    ofstream archivoBackup("backup_datos.csv");
+    if (archivoBackup.is_open()) {
+
+        archivoBackup << "Pacientes\n";
+        archivoBackup << "ID,Nombre,Fecha de Ingreso,Historial Clínico\n";
+        for (const auto& paciente : pacientes) {
+            archivoBackup << paciente.getId() << ","
+                << paciente.getNombre() << ","
+                << paciente.getFechaIngreso() << ",";
+            const auto& historial = paciente.getHistorial();
+            for (size_t i = 0; i < historial.size(); ++i) {
+                archivoBackup << historial[i];
+                if (i != historial.size() - 1) {
+                    archivoBackup << "|";
+                }
+            }
+            archivoBackup << "\n";
+        }
+
+        archivoBackup << "\nMédicos\n";
+        archivoBackup << "ID,Nombre,Especialidad,Disponibilidad\n";
+        for (const auto& medico : medicos) {
+            archivoBackup << medico.getId() << ","
+                << medico.getNombre() << ","
+                << medico.getEspecialidad() << ","
+                << (medico.getDisponibilidad() ? "Disponible" : "No disponible") << "\n";
+        }
+
+        archivoBackup << "\nCitas\n";
+        archivoBackup << "Fecha,Urgencia,Paciente_ID,Medico_ID\n";
+        for (const auto& cita : citas) {
+            archivoBackup << cita.getFecha() << ","
+                << cita.getUrgencia() << ","
+                << cita.getPaciente().getId() << ","
+                << cita.getMedico().getId() << "\n";
+        }
+
+        archivoBackup.close();
+        cout << "Datos de respaldo guardados en backup_datos.csv.\n";
+    }
+    else {
+        cout << "No se pudo abrir el archivo de backup.\n";
+    }
 }
 
 void mostrarTodosPacientes(const vector<Paciente>& pacientes) {
@@ -162,7 +215,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
     cout << "3. Editar paciente por ID\n";
     cout << "4. Eliminar paciente por ID\n";
     cout << "5. Listar todos los pacientes\n";
-    cout << "6. Gestionar historial clinico de un paciente\n";
+    cout << "6. Gestionar historial clínico de un paciente\n";
     cout << "Ingrese una opcion: ";
 
     int opcion;
@@ -178,7 +231,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
         cout << "Ingrese el ID del paciente: ";
         cin >> id;
         cin.ignore(); 
-        cout << "Ingrese la fecha de ingreso (dd/mm/aaaa): ";
+        cout << "Ingrese la fecha de ingreso (DD/MM/AAAA): ";
         getline(cin, fechaIngreso);
 
         Paciente nuevoPaciente(nombre, id, fechaIngreso);
@@ -221,7 +274,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
                 cin.ignore();
                 cout << "Ingrese el nuevo nombre del paciente: ";
                 getline(cin, nombre);
-                cout << "Ingrese la nueva fecha de ingreso (dd/mm/aaaa): ";
+                cout << "Ingrese la nueva fecha de ingreso (DD/MM/AAAA): ";
                 getline(cin, fechaIngreso);
 
                 paciente.setNombre(nombre); 
@@ -393,76 +446,286 @@ void gestionarMedicos(vector<Medico>& medicos) {
 }
 
 void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Medico>& medicos) {
-    cout << "Gestion de Citas\n";
-    cout << "1. Asignar nueva cita\n";
-    cout << "2. Cancelar cita\n";
+    cout << "\nGestion de Citas\n";
+    cout << "1. Registrar nueva cita\n";
+    cout << "2. Cancelar cita existente\n";
+    cout << "3. Mostrar todas las citas\n";
+    cout << "4. Modificar cita existente\n";
     cout << "Ingrese una opcion: ";
     int opcion;
     cin >> opcion;
+
     if (opcion == 1) {
+        
         string fecha, urgencia;
         int idPaciente, idMedico;
-        do {
-            cout << "Fecha (DD/MM/AAAA):";
-            cin >> fecha;
-        } while (!validarFecha(fecha));
-        cout << "Urgencia:";
-        cin >> urgencia;
-        cout << "ID del Paciente:";
+
+        cout << "Ingrese la fecha de la cita (DD/MM/AAAA): ";
+        cin.ignore();
+        getline(cin, fecha);
+        if (!validarFecha(fecha)) return;
+
+        cout << "Ingrese la urgencia (Alta, Media, Baja): ";
+        getline(cin, urgencia);
+
+        cout << "Ingrese el ID del paciente: ";
         cin >> idPaciente;
-        cout << "ID del Medico:";
+
+        cout << "Ingrese el ID del medico: ";
         cin >> idMedico;
 
-        Paciente* paciente = nullptr;
-        for (auto& p : pacientes) {
-            if (p.getId() == idPaciente) {
-                paciente = &p;
+        Paciente* pacienteSeleccionado = nullptr;
+        Medico* medicoSeleccionado = nullptr;
+
+        for (auto& paciente : pacientes) {
+            if (paciente.getId() == idPaciente) {
+                pacienteSeleccionado = &paciente;
                 break;
             }
         }
-        if (!paciente) {
-            cout << "No se ha encontrado un paciente con el ID " << idPaciente << ".\n";
-            return;
-        }
-        Medico* medico = nullptr;
-        for (auto& m : medicos) {
-            if (m.getId() == idMedico) {
-                medico = &m;
+
+        for (auto& medico : medicos) {
+            if (medico.getId() == idMedico) {
+                medicoSeleccionado = &medico;
                 break;
             }
         }
-        if (!medico) {
-            cout << "No se ha encontrado un medico con el ID " << idMedico << ".\n";
-            return;
+
+        if (pacienteSeleccionado && medicoSeleccionado) {
+            citas.push_back(Cita(fecha, urgencia, *pacienteSeleccionado, *medicoSeleccionado));
+            cout << "Cita registrada exitosamente.\n";
         }
-
-        citas.push_back(Cita(fecha, urgencia, *paciente, *medico));
-        cout << "Cita asignada correctamente.\n";
-
+        else {
+            cout << "No se encontró el paciente o el médico con los IDs proporcionados.\n";
+        }
     }
-    else if (opcion == 2) {
-        cout << "Ingrese la fecha de la cita a cancelar (DD/MM/AA):";
-        string fecha;
-        do {
-            cin >> fecha;
-        } while (!validarFecha(fecha));
 
-        for (auto it = citas.begin(); it != citas.end(); ++it) {
+    else if (opcion == 2) {
+
+        cout << "Ingrese la fecha de la cita a cancelar (DD/MM/AAAA): ";
+        string fecha;
+        cin.ignore();
+        getline(cin, fecha);
+
+        auto it = citas.begin();
+        bool encontrada = false;
+
+        while (it != citas.end()) {
             if (it->getFecha() == fecha) {
-                cout << "Cita del " << it->getFecha() << " cancelada.\n";
+                encontrada = true;
                 citas.erase(it);
+                cout << "Cita cancelada exitosamente.\n";
                 break;
             }
+            ++it;
+        }
+
+        if (!encontrada) {
+            cout << "No se encontró una cita con la fecha proporcionada.\n";
+        }
+    }
+    else if (opcion == 3) {
+
+        if (citas.empty()) {
+            cout << "No hay citas registradas.\n";
+        }
+        else {
+            cout << "Listado de citas:\n";
+            for (const auto& cita : citas) {
+                cout << "Fecha: " << cita.getFecha()
+                    << ", Urgencia: " << cita.getUrgencia()
+                    << ", Paciente: " << cita.getPaciente().getNombre()
+                    << ", Médico: " << cita.getMedico().getNombre() << "\n";
+            }
+        }
+    }
+
+    else if (opcion == 4) {
+
+        cout << "Ingrese la fecha de la cita a modificar (DD/MM/AAAA): ";
+        string fecha;
+        cin.ignore();
+        getline(cin, fecha);
+
+        bool encontrada = false;
+
+        for (auto& cita : citas) {
+            if (cita.getFecha() == fecha) {
+                encontrada = true;
+                cout << "Cita encontrada:\n";
+                cout << "Fecha: " << cita.getFecha()
+                    << ", Urgencia: " << cita.getUrgencia()
+                    << ", Paciente: " << cita.getPaciente().getNombre()
+                    << ", Médico: " << cita.getMedico().getNombre() << "\n";
+
+                cout << "Seleccione qué desea modificar:\n";
+                cout << "1. Fecha\n";
+                cout << "2. Urgencia\n";
+                cout << "3. Paciente\n";
+                cout << "4. Médico\n";
+                cout << "Ingrese una opción: ";
+                int opcionMod;
+                cin >> opcionMod;
+
+                if (opcionMod == 1) {
+                    string nuevaFecha;
+                    cout << "Ingrese la nueva fecha (DD/MM/AAAA): ";
+                    cin.ignore();
+                    getline(cin, nuevaFecha);
+                    if (validarFecha(nuevaFecha)) {
+                        cita.setFecha(nuevaFecha);
+                        cout << "Fecha actualizada exitosamente.\n";
+                    }
+                }
+                else if (opcionMod == 2) {
+                    string nuevaUrgencia;
+                    cout << "Ingrese la nueva urgencia (Alta, Media, Baja): ";
+                    cin.ignore();
+                    getline(cin, nuevaUrgencia);
+                    cita.setUrgencia(nuevaUrgencia);
+                    cout << "Urgencia actualizada exitosamente.\n";
+                }
+                else if (opcionMod == 3) {
+                    int nuevoIdPaciente;
+                    cout << "Ingrese el nuevo ID del paciente: ";
+                    cin >> nuevoIdPaciente;
+
+                    Paciente* nuevoPaciente = nullptr;
+                    for (auto& paciente : pacientes) {
+                        if (paciente.getId() == nuevoIdPaciente) {
+                            nuevoPaciente = &paciente;
+                            break;
+                        }
+                    }
+
+                    if (nuevoPaciente) {
+                        cita.setPaciente(*nuevoPaciente);
+                        cout << "Paciente actualizado exitosamente.\n";
+                    }
+                    else {
+                        cout << "No se encontró un paciente con el ID proporcionado.\n";
+                    }
+                }
+                else if (opcionMod == 4) {
+                    int nuevoIdMedico;
+                    cout << "Ingrese el nuevo ID del médico: ";
+                    cin >> nuevoIdMedico;
+
+                    Medico* nuevoMedico = nullptr;
+                    for (auto& medico : medicos) {
+                        if (medico.getId() == nuevoIdMedico) {
+                            nuevoMedico = &medico;
+                            break;
+                        }
+                    }
+
+                    if (nuevoMedico) {
+                        cita.setMedico(*nuevoMedico);
+                        cout << "Médico actualizado exitosamente.\n";
+                    }
+                    else {
+                        cout << "No se encontró un médico con el ID proporcionado.\n";
+                    }
+                }
+                else {
+                    cout << "Opción no válida.\n";
+                }
+
+                break;
+            }
+        }
+
+        if (!encontrada) {
+            cout << "No se encontró una cita con la fecha proporcionada.\n";
+        }
+    }
+    else {
+        cout << "Opción inválida. Intente nuevamente.\n";
+    }
+}
+
+
+bool esFechaValida(const string& fecha) {
+    if (fecha.size() != 10) return false;
+    if (fecha[2] != '/' || fecha[5] != '/') return false;
+    for (int i = 0; i < fecha.size(); ++i) {
+        if (i != 2 && i != 5 && !isdigit(fecha[i])) return false;
+    }
+    return true;
+}
+
+bool compararFechas(const string& fecha1, const string& fecha2) {
+    return fecha1 >= fecha2;
+}
+
+void pacientesAtendidosEnRango(const vector<Cita>& citas, const string& fechaInicio, const string& fechaFin) {
+    cout << "Pacientes atendidos entre " << fechaInicio << " y " << fechaFin << ":\n";
+    for (const auto& cita : citas) {
+        if (compararFechas(cita.getFecha(), fechaInicio) && compararFechas(fechaFin, cita.getFecha())) {
+            cout << "- " << cita.getPaciente().getNombre() << "\n";
         }
     }
 }
 
-void generarReportes(vector<Cita>& citas) {
-    cout << "Generando reportes de citas\n";
-    for (const auto& cita : citas) {
-        cout << "Fecha:" << cita.getFecha()
-            << ",Paciente:" << cita.getPaciente().getNombre()
-            << ",Medico:" << cita.getMedico().getNombre()
-            << ",Urgencia:" << cita.getUrgencia() << "\n";
+void citasPendientesPorMedico(const vector<Cita>& citas, const string& filtro, bool porEspecialidad = false) {
+    cout << "Citas pendientes ";
+    if (porEspecialidad) {
+        cout << "por especialidad " << filtro << ":\n";
     }
+    else {
+        cout << "del médico " << filtro << ":\n";
+    }
+
+    for (const auto& cita : citas) {
+        if ((porEspecialidad && cita.getMedico().getEspecialidad() == filtro) ||
+            (!porEspecialidad && cita.getMedico().getNombre() == filtro)) {
+            cout << "- Paciente: " << cita.getPaciente().getNombre() << ", Fecha: " << cita.getFecha() << "\n";
+        }
+    }
+}
+
+void gestionarReportes(const vector<Cita>& citas, const vector<Paciente>& pacientes) {
+    int opcion;
+    do {
+        cout << "\n--- Reportes ---\n";
+        cout << "1. Listado de pacientes atendidos en un rango de fechas\n";
+        cout << "2. Citas pendientes por médico\n";
+        cout << "3. Citas pendientes por especialidad\n";
+        cout << "4. Volver\n";
+        cout << "Seleccione una opción: ";
+        cin >> opcion;
+
+        switch (opcion) {
+        case 1: {
+            string fechaInicio, fechaFin;
+            cout << "Ingrese la fecha de inicio (AAAA-MM-DD): ";
+            cin >> fechaInicio;
+            cout << "Ingrese la fecha de fin (AAAA-MM-DD): ";
+            cin >> fechaFin;
+            pacientesAtendidosEnRango(citas, fechaInicio, fechaFin);
+            break;
+        }
+        case 2: {
+            string medico;
+            cout << "Ingrese el nombre del médico: ";
+            cin.ignore();
+            getline(cin, medico);
+            citasPendientesPorMedico(citas, medico);
+            break;
+        }
+        case 3: {
+            string especialidad;
+            cout << "Ingrese la especialidad: ";
+            cin.ignore();
+            getline(cin, especialidad);
+            citasPendientesPorMedico(citas, especialidad, true);
+            break;
+        }
+        case 4:
+            cout << "Volviendo al menú principal...\n";
+            break;
+        default:
+            cout << "Opción no válida. Intente de nuevo.\n";
+        }
+    } while (opcion != 4);
 }

@@ -4,26 +4,27 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 class Paciente {
 private:
-    std::string nombre;
+    string nombre;
     int id;
-    std::string fechaIngreso;
-    std::vector<std::string> historial;
+    string fechaIngreso;
+    vector<string> historial; //Se almacena el historial clinico
 
 public:
-   
-    Paciente(std::string nombre, int id, std::string fechaIngreso);
-
-    std::string getNombre() const;
+    Paciente(string nombre, int id, string fechaIngreso);
+    
+    string getNombre() const;
     int getId() const;
-    std::string getFechaIngreso() const;
-    const std::vector<std::string>& getHistorial() const;
+    string getFechaIngreso() const;
+    const vector<string>& getHistorial() const;
+    
+    void setNombre(const string& nuevoNombre);
+    void setFechaIngreso(const string& nuevaFecha);
 
-    void setNombre(const std::string& nuevoNombre);
-    void setFechaIngreso(const std::string& nuevaFecha);
-
-    void registrarHistorial(const std::string& entrada);
+    void registrarHistorial(const string& entrada);
     void mostrarHistorial() const;
 };
 

@@ -1,10 +1,14 @@
 #include "Cita.h"
 #include <iostream>
 
-Cita::Cita(string fecha, string urg, Paciente pac, Medico med) : fecha(fecha), urgencia(urg), paciente(pac), medico(med) {}
+using namespace std;
+
+Cita::Cita(string fecha, string urg, Paciente pac, Medico med)
+    : fecha(fecha), urgencia(urg), paciente(pac), medico(med) {
+}
 
 void Cita::asignarCita() {
-    cout << "Cita asignada e " << fecha << " con urgencia " << urgencia << "\n";
+    cout << "Cita asignada el " << fecha << " con urgencia " << urgencia << "\n";
 }
 
 void Cita::cancelarCita() {
@@ -25,4 +29,20 @@ Paciente Cita::getPaciente() const {
 
 Medico Cita::getMedico() const {
     return medico;
+}
+
+void Cita::setFecha(const string& nuevaFecha) {
+    fecha = nuevaFecha;
+}
+
+void Cita::setUrgencia(const string& nuevaUrgencia) {
+    urgencia = nuevaUrgencia;
+}
+
+void Cita::setPaciente(const Paciente& nuevoPaciente) {
+    paciente = nuevoPaciente;
+}
+
+void Cita::setMedico(const Medico& nuevoMedico) {
+    medico = nuevoMedico;
 }
