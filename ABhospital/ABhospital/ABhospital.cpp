@@ -234,15 +234,27 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
         cin.ignore();
         cout << "Ingrese el nombre del paciente: ";
         getline(cin, nombre);
-        cout << "Ingrese el ID del paciente: ";
-        while (!(cin >> id)) {
-            cout << "Entrada incorrecta. Por favor, ingrese solo números.\n";
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Ingrese el ID del paciente: ";
-        }
-        cin.ignore();
 
+        bool idUnico;
+        do {
+            idUnico = true;
+            cout << "Ingrese el ID del paciente: ";
+            while (!(cin >> id)) {
+                cout << "Entrada inválida. Por favor, ingrese solo números.\n";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Ingrese el ID del paciente: ";
+            }
+            for (const auto& paciente : pacientes) {
+                if (paciente.getId() == id) {
+                    cout << "El ID ya existe. Ingrese un ID único.\n";
+                    idUnico = false;
+                    break;
+                }
+            }
+        } while (!idUnico);
+
+        cin.ignore();
         do {
             cout << "Ingrese la fecha de ingreso (DD/MM/AAAA): ";
             getline(cin, fechaIngreso);
@@ -427,31 +439,43 @@ void gestionarMedicos(vector<Medico>& medicos) {
         string nombre, especialidad;
         int id;
         bool disponibilidad;
+
         cin.ignore();
-        cout << "Nombre: ";
+        cout << "Ingrese el nombre del médico: ";
         getline(cin, nombre);
 
-        cout << "ID: ";
-        while (!(cin >> id)) {
-            cout << "Entrada incorrecta. Por favor, ingrese solo números.\n";
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "ID: ";
-        }
+        bool idUnico;
+        do {
+            idUnico = true;
+            cout << "Ingrese el ID del médico: ";
+            while (!(cin >> id)) {
+                cout << "Entrada incorrecta. Por favor, ingrese solo números.\n";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Ingrese el ID del médico: ";
+            }
+            for (const auto& medico : medicos) {
+                if (medico.getId() == id) {
+                    cout << "El ID ya existe. Ingrese un ID único.\n";
+                    idUnico = false;
+                    break;
+                }
+            }
+        } while (!idUnico);
 
         cin.ignore();
-        cout << "Especialidad: ";
+        cout << "Ingrese la especialidad: ";
         getline(cin, especialidad);
 
-        cout << "Disponibilidad (1 para disponible, 0 para no disponible): ";
+        cout << "Ingrese la disponibilidad (1 para disponible, 0 para no disponible): ";
         while (!(cin >> disponibilidad)) {
-            cout << "Entrada incorrecta. Ingrese 1 para disponible o 0 para no disponible.\n";
+            cout << "Entrada inválida. Por favor, ingrese 1 o 0.\n";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Disponibilidad (1 para disponible, 0 para no disponible): ";
         }
+
         medicos.push_back(Medico(nombre, id, especialidad, disponibilidad));
-        cout << "Medico dado de alta correctamente.\n";
+        cout << "Médico registrado exitosamente.\n";
     }
     else if (opcion == 2) {
         cout << "Ingrese el ID del medico a dar de baja: ";
@@ -526,7 +550,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
 
         do {
             cout << "Ingrese la fecha de la cita (DD/MM/AAAA): ";
-            cin.ignore();
+            if (cin.peek() == '\n') cin.ignore();  // Limpia solo si hay un salto de línea pendiente
             getline(cin, fecha);
         } while (!validarFecha(fecha));
 
@@ -578,7 +602,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
         string fecha;
         do {
             cout << "Ingrese la fecha de la cita a cancelar (DD/MM/AAAA): ";
-            cin.ignore();
+            if (cin.peek() == '\n') cin.ignore();
             getline(cin, fecha);
         } while (!validarFecha(fecha));
 
@@ -618,7 +642,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
         string fecha;
         do {
             cout << "Ingrese la fecha de la cita a modificar (DD/MM/AAAA): ";
-            cin.ignore();
+            if (cin.peek() == '\n') cin.ignore();
             getline(cin, fecha);
         } while (!validarFecha(fecha));
 
@@ -646,7 +670,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
                     string nuevaFecha;
                     do {
                         cout << "Ingrese la nueva fecha (DD/MM/AAAA): ";
-                        cin.ignore();
+                        if (cin.peek() == '\n') cin.ignore();
                         getline(cin, nuevaFecha);
                     } while (!validarFecha(nuevaFecha));
                     cita.setFecha(nuevaFecha);
@@ -775,7 +799,7 @@ void gestionarReportes(const vector<Cita>& citas, const vector<Paciente>& pacien
     do {
         cout << "\n--- Reportes ---\n";
         cout << "1. Listado de pacientes atendidos en un rango de fechas\n";
-        cout << "2. Citas pendientes por médico\n";
+        cout << "2. Citas pendientes por médico (ID)\n";
         cout << "3. Citas pendientes por especialidad\n";
         cout << "4. Volver\n";
         cout << "Seleccione una opción: ";
@@ -786,24 +810,48 @@ void gestionarReportes(const vector<Cita>& citas, const vector<Paciente>& pacien
             string fechaInicio, fechaFin;
             do {
                 cout << "Ingrese la fecha de inicio (DD/MM/AAAA): ";
-                cin.ignore();
+                if (cin.peek() == '\n') cin.ignore();
                 getline(cin, fechaInicio);
-            } while (!validarFecha(fechaInicio));  
+            } while (!validarFecha(fechaInicio));
 
             do {
                 cout << "Ingrese la fecha de fin (DD/MM/AAAA): ";
                 getline(cin, fechaFin);
-            } while (!validarFecha(fechaFin));  
+            } while (!validarFecha(fechaFin));
 
             pacientesAtendidosEnRango(citas, fechaInicio, fechaFin);
             break;
         }
         case 2: {
-            string medico;
-            cout << "Ingrese el nombre del médico: ";
-            cin.ignore();
-            getline(cin, medico);
-            citasPendientesPorMedico(citas, medico);
+            int idMedico;
+            bool medicoEncontrado = false;
+            do {
+                cout << "Ingrese el ID del médico: ";
+                while (!(cin >> idMedico)) {
+                    cout << "Entrada incorrecta. Por favor, ingrese solo números.\n";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Ingrese el ID del médico: ";
+                }
+
+                for (const auto& cita : citas) {
+                    if (cita.getMedico().getId() == idMedico) {
+                        medicoEncontrado = true;
+                        break;
+                    }
+                }
+
+                if (!medicoEncontrado) {
+                    cout << "No se encontró un médico con ese ID.\n";
+                }
+            } while (!medicoEncontrado);
+
+            cout << "Citas pendientes para el médico con ID " << idMedico << ":\n";
+            for (const auto& cita : citas) {
+                if (cita.getMedico().getId() == idMedico) {
+                    cout << "Paciente: " << cita.getPaciente().getNombre() << ", Fecha: " << cita.getFecha() << "\n";
+                }
+            }
             break;
         }
         case 3: {
