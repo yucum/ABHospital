@@ -87,11 +87,17 @@ void menuPrincipal() {
 }
 
 bool validarFecha(const string& fecha) {
-    regex formatoFecha("^\\d{2}/\\d{2}/\\d{4}$");
+    regex formatoFecha("^\\d{2}/\\d{2}/\\d{4}$");  
     if (regex_match(fecha, formatoFecha)) {
-        return true;
+        int dia = stoi(fecha.substr(0, 2));
+        int mes = stoi(fecha.substr(3, 2));
+        int año = stoi(fecha.substr(6, 4));
+
+        if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12) {
+            return true;
+        }
     }
-    cout << "La fecha introducida no es correcta. Debe ser DD/MM/AAAA.\n";
+    cout << "La fecha introducida no es correcta. Debe ser en formato DD(01-31)/MM(01-12)/AAAA.\n";
     return false;
 }
 
@@ -221,24 +227,27 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
     int opcion;
     cin >> opcion;
 
-    if (opcion == 1) { 
+    if (opcion == 1) {
         string nombre, fechaIngreso;
         int id;
 
-        cin.ignore(); 
+        cin.ignore();
         cout << "Ingrese el nombre del paciente: ";
         getline(cin, nombre);
         cout << "Ingrese el ID del paciente: ";
         cin >> id;
-        cin.ignore(); 
-        cout << "Ingrese la fecha de ingreso (DD/MM/AAAA): ";
-        getline(cin, fechaIngreso);
+        cin.ignore();
+
+        do {
+            cout << "Ingrese la fecha de ingreso (DD/MM/AAAA): ";
+            getline(cin, fechaIngreso);
+        } while (!validarFecha(fechaIngreso));  
 
         Paciente nuevoPaciente(nombre, id, fechaIngreso);
         pacientes.push_back(nuevoPaciente);
         cout << "Paciente registrado exitosamente.\n";
     }
-    else if (opcion == 2) { 
+    else if (opcion == 2) {
         cout << "Ingrese el ID del paciente a buscar: ";
         int id;
         cin >> id;
@@ -260,7 +269,7 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
         }
     }
 
-    else if (opcion == 3) { 
+    else if (opcion == 3) {
         cout << "Ingrese el ID del paciente a editar: ";
         int id;
         cin >> id;
@@ -274,10 +283,13 @@ void gestionarPacientes(vector<Paciente>& pacientes) {
                 cin.ignore();
                 cout << "Ingrese el nuevo nombre del paciente: ";
                 getline(cin, nombre);
-                cout << "Ingrese la nueva fecha de ingreso (DD/MM/AAAA): ";
-                getline(cin, fechaIngreso);
 
-                paciente.setNombre(nombre); 
+                do {
+                    cout << "Ingrese la nueva fecha de ingreso (DD/MM/AAAA): ";
+                    getline(cin, fechaIngreso);
+                } while (!validarFecha(fechaIngreso));  
+
+                paciente.setNombre(nombre);
                 paciente.setFechaIngreso(fechaIngreso);
 
                 cout << "Datos del paciente actualizados.\n";
@@ -456,14 +468,14 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
     cin >> opcion;
 
     if (opcion == 1) {
-        
         string fecha, urgencia;
         int idPaciente, idMedico;
 
-        cout << "Ingrese la fecha de la cita (DD/MM/AAAA): ";
-        cin.ignore();
-        getline(cin, fecha);
-        if (!validarFecha(fecha)) return;
+        do {
+            cout << "Ingrese la fecha de la cita (DD/MM/AAAA): ";
+            cin.ignore();
+            getline(cin, fecha);
+        } while (!validarFecha(fecha));
 
         cout << "Ingrese la urgencia (Alta, Media, Baja): ";
         getline(cin, urgencia);
@@ -501,11 +513,12 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
     }
 
     else if (opcion == 2) {
-
-        cout << "Ingrese la fecha de la cita a cancelar (DD/MM/AAAA): ";
         string fecha;
-        cin.ignore();
-        getline(cin, fecha);
+        do {
+            cout << "Ingrese la fecha de la cita a cancelar (DD/MM/AAAA): ";
+            cin.ignore();
+            getline(cin, fecha);
+        } while (!validarFecha(fecha));  
 
         auto it = citas.begin();
         bool encontrada = false;
@@ -539,25 +552,25 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
             }
         }
     }
-
     else if (opcion == 4) {
-
-        cout << "Ingrese la fecha de la cita a modificar (DD/MM/AAAA): ";
         string fecha;
-        cin.ignore();
-        getline(cin, fecha);
+        do {
+            cout << "Ingrese la fecha de la cita a modificar (DD/MM/AAAA): ";
+            cin.ignore();
+            getline(cin, fecha);
+        } while (!validarFecha(fecha));  
 
         bool encontrada = false;
 
         for (auto& cita : citas) {
+            cout << "Cita encontrada:\n";
+            cout << "Fecha: " << cita.getFecha()
+                << ", Urgencia: " << cita.getUrgencia()
+                << ", Paciente: " << cita.getPaciente().getNombre()
+                << ", Médico: " << cita.getMedico().getNombre() << "\n";
+
             if (cita.getFecha() == fecha) {
                 encontrada = true;
-                cout << "Cita encontrada:\n";
-                cout << "Fecha: " << cita.getFecha()
-                    << ", Urgencia: " << cita.getUrgencia()
-                    << ", Paciente: " << cita.getPaciente().getNombre()
-                    << ", Médico: " << cita.getMedico().getNombre() << "\n";
-
                 cout << "Seleccione qué desea modificar:\n";
                 cout << "1. Fecha\n";
                 cout << "2. Urgencia\n";
@@ -569,13 +582,13 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
 
                 if (opcionMod == 1) {
                     string nuevaFecha;
-                    cout << "Ingrese la nueva fecha (DD/MM/AAAA): ";
-                    cin.ignore();
-                    getline(cin, nuevaFecha);
-                    if (validarFecha(nuevaFecha)) {
-                        cita.setFecha(nuevaFecha);
-                        cout << "Fecha actualizada exitosamente.\n";
-                    }
+                    do {
+                        cout << "Ingrese la nueva fecha (DD/MM/AAAA): ";
+                        cin.ignore();
+                        getline(cin, nuevaFecha);
+                    } while (!validarFecha(nuevaFecha));  
+                    cita.setFecha(nuevaFecha);
+                    cout << "Fecha actualizada exitosamente.\n";
                 }
                 else if (opcionMod == 2) {
                     string nuevaUrgencia;
@@ -630,7 +643,6 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
                 else {
                     cout << "Opción no válida.\n";
                 }
-
                 break;
             }
         }
@@ -639,29 +651,31 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
             cout << "No se encontró una cita con la fecha proporcionada.\n";
         }
     }
-    else {
-        cout << "Opción inválida. Intente nuevamente.\n";
-    }
 }
 
 
-bool esFechaValida(const string& fecha) {
-    if (fecha.size() != 10) return false;
-    if (fecha[2] != '/' || fecha[5] != '/') return false;
-    for (int i = 0; i < fecha.size(); ++i) {
-        if (i != 2 && i != 5 && !isdigit(fecha[i])) return false;
-    }
-    return true;
+static bool esFechaValida(const string& fecha) {
+    return validarFecha(fecha);  
 }
 
-bool compararFechas(const string& fecha1, const string& fecha2) {
-    return fecha1 >= fecha2;
+static bool compararFechas(const string& fecha1, const string& fecha2) {
+    int dia1 = stoi(fecha1.substr(0, 2));
+    int mes1 = stoi(fecha1.substr(3, 2));
+    int año1 = stoi(fecha1.substr(6, 4));
+
+    int dia2 = stoi(fecha2.substr(0, 2));
+    int mes2 = stoi(fecha2.substr(3, 2));
+    int año2 = stoi(fecha2.substr(6, 4));
+
+    if (año1 != año2) return año1 < año2;
+    if (mes1 != mes2) return mes1 < mes2;
+    return dia1 <= dia2;
 }
 
 void pacientesAtendidosEnRango(const vector<Cita>& citas, const string& fechaInicio, const string& fechaFin) {
     cout << "Pacientes atendidos entre " << fechaInicio << " y " << fechaFin << ":\n";
     for (const auto& cita : citas) {
-        if (compararFechas(cita.getFecha(), fechaInicio) && compararFechas(fechaFin, cita.getFecha())) {
+        if (compararFechas(fechaInicio, cita.getFecha()) && compararFechas(cita.getFecha(), fechaFin)) {
             cout << "- " << cita.getPaciente().getNombre() << "\n";
         }
     }
@@ -698,10 +712,17 @@ void gestionarReportes(const vector<Cita>& citas, const vector<Paciente>& pacien
         switch (opcion) {
         case 1: {
             string fechaInicio, fechaFin;
-            cout << "Ingrese la fecha de inicio (AAAA-MM-DD): ";
-            cin >> fechaInicio;
-            cout << "Ingrese la fecha de fin (AAAA-MM-DD): ";
-            cin >> fechaFin;
+            do {
+                cout << "Ingrese la fecha de inicio (DD/MM/AAAA): ";
+                cin.ignore();
+                getline(cin, fechaInicio);
+            } while (!validarFecha(fechaInicio));  
+
+            do {
+                cout << "Ingrese la fecha de fin (DD/MM/AAAA): ";
+                getline(cin, fechaFin);
+            } while (!validarFecha(fechaFin));  
+
             pacientesAtendidosEnRango(citas, fechaInicio, fechaFin);
             break;
         }
