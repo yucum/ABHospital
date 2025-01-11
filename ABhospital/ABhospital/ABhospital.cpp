@@ -3,6 +3,7 @@
 #include <vector>
 #include <regex>
 #include <fstream>
+#define NOMINMAX
 #include <limits>
 #include "Paciente.h"
 #include "Medico.h"
