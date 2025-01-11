@@ -3,6 +3,7 @@
 #include <vector>
 #include <regex>
 #include <fstream>
+#include <limits>
 #include "Paciente.h"
 #include "Medico.h"
 #include "Cita.h"
@@ -91,7 +92,7 @@ bool validarFecha(const string& fecha) {
     if (regex_match(fecha, formatoFecha)) {
         int dia = stoi(fecha.substr(0, 2));
         int mes = stoi(fecha.substr(3, 2));
-        int año = stoi(fecha.substr(6, 4));
+        
 
         if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12) {
             return true;
@@ -750,21 +751,12 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
 }
 
 
-static bool esFechaValida(const string& fecha) {
-    return validarFecha(fecha);  
-}
-
 static bool compararFechas(const string& fecha1, const string& fecha2) {
     int dia1 = stoi(fecha1.substr(0, 2));
     int mes1 = stoi(fecha1.substr(3, 2));
-    int año1 = stoi(fecha1.substr(6, 4));
 
     int dia2 = stoi(fecha2.substr(0, 2));
     int mes2 = stoi(fecha2.substr(3, 2));
-    int año2 = stoi(fecha2.substr(6, 4));
-
-    if (año1 != año2) return año1 < año2;
-    if (mes1 != mes2) return mes1 < mes2;
     return dia1 <= dia2;
 }
 
