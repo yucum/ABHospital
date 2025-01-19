@@ -784,7 +784,8 @@ static void citasPendientesPorMedico(const vector<Cita>& citas, const string& fi
     }
 }
 
-void gestionarReportes(const vector<Cita>& citas) {
+void gestionarReportes(const vector<Cita>& citas, const vector<Paciente>& pacientes) {
+    (void)pacientes;
     int opcion;
     do {
         cout << "\n--- Reportes ---\n";
