@@ -552,7 +552,7 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
 
         do {
             cout << "Ingrese la fecha de la cita (DD/MM/AAAA): ";
-            if (cin.peek() == '\n') cin.ignore();  // Limpia solo si hay un salto de línea pendiente
+            if (cin.peek() == '\n') cin.ignore(); 
             getline(cin, fecha);
         } while (!validarFecha(fecha));
 
