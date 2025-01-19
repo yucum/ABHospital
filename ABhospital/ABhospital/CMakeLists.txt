@@ -30,6 +30,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 add_executable(ABhospital ${SOURCES} ${HEADERS})
 
-set_target_properties(ABhospital PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 message(STATUS "Configuración de CMake completada para ABhospital")
