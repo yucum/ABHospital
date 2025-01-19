@@ -753,11 +753,8 @@ void gestionarCitas(vector<Cita>& citas, vector<Paciente>& pacientes, vector<Med
 
 
 static bool compararFechas(const string& fecha1, const string& fecha2) {
-    int dia1 = stoi(fecha1.substr(0, 2));
-    int mes1 = stoi(fecha1.substr(3, 2));
-
+    int dia1 = stoi(fecha1.substr(0, 2)); 
     int dia2 = stoi(fecha2.substr(0, 2));
-    int mes2 = stoi(fecha2.substr(3, 2));
     return dia1 <= dia2;
 }
 
@@ -787,7 +784,7 @@ static void citasPendientesPorMedico(const vector<Cita>& citas, const string& fi
     }
 }
 
-void gestionarReportes(const vector<Cita>& citas, const vector<Paciente>& pacientes) {
+void gestionarReportes(const vector<Cita>& citas) {
     int opcion;
     do {
         cout << "\n--- Reportes ---\n";
